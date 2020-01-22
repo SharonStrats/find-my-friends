@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   fetchConnections,
   PersonDetails,
@@ -6,21 +7,54 @@ import {
 } from 'solid-friend-helpers';
 
 type FriendProps = {
-  key: String;
-  name: String | null;
+  details: PersonDetails;
 };
 type FriendsProps = {
   friends: PersonDetails[];
 };
-const FriendCard = (props: FriendProps) => {
+export const PersonSummary: React.FC<FriendProps> = props => {
+  const details = props.details;
+  const photo = (
+    <>
+      <div className='media-right'>
+        <figure className='card-header-title'>
+          <p className='image is-48x48'>
+            <img
+              src={details.avatarUrl || '/img/default-avatar.png'}
+              alt='Avatar'
+              className='is-rounded'
+            />
+          </p>
+        </figure>
+      </div>
+    </>
+  );
+
+  return (
+    <div>
+      <Link
+        to={`/profile/${encodeURIComponent(details.webId)}`}
+        title="View this person's friends"
+      >
+        <div className='media'>
+          {photo}
+          <div className='media-content'>
+            <div className='media-left'>{details.fullName}</div>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+const FriendCard = (props: FriendProps): React.ReactElement => {
   /*      <h5>{props.location}</h5>
       <h6>
         Lat: {props.latitude} Lon: {props.longitude}
       </h6> */
   return (
-    <div className='card'>
-      <h4>{props.key}</h4>
-      <h5>{props.name}</h5>
+    <div key={props.details.webId} className='card'>
+      <PersonSummary details={props.details} />
     </div>
   );
 };
@@ -34,7 +68,7 @@ const FriendCardList = (props: FriendsProps) => {
         latitude={friend.latitude}
         longitude={friend.longitude}
         location={friend.location}  */
-    return <FriendCard key={friend.webId} name={friend.fullName} />;
+    return <FriendCard details={friend} />;
   });
   return <div className='friend-list'>{friends}</div>;
 };
@@ -44,10 +78,9 @@ export const Friends: React.FC<{}> = () => {
   // const myWebId = useWebId();
   useEffect(() => {
     (async () => {
-      let generator = fetchConnections([PersonType.me, PersonType.friend]);
+      let generator = fetchConnections([PersonType.friend]);
 
       for await (let friends of generator) {
-        console.log('Friends from app' + JSON.stringify(friends));
         setFriends(friends);
       }
     })();
@@ -55,8 +88,7 @@ export const Friends: React.FC<{}> = () => {
 
   return (
     <>
-      <div className='card'>
-        <h3>Friends</h3>
+      <div>
         <FriendCardList friends={friends} />
       </div>
     </>

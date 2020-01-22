@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { LoggedOut, LoginButton, LoggedIn } from '@solid/react';
 import { LoggedInView } from './components/LoggedInView';
-import { fetchPersonTypeLists, PersonType } from 'solid-friend-picker';
 
 //I could use this for creating a map and adding markers
 //https://developer.mapquest.com/documentation/static-map-api/v5/examples/adding-locations/multiple-locations/
