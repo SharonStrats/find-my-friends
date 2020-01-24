@@ -1,11 +1,22 @@
-import React from 'react';
-import { fetchDocument, TripleDocument, TripleSubject } from 'tripledoc';
+import React, { useEffect } from 'react';
+import {
+  fetchDocument,
+  TripleDocument,
+  TripleSubject,
+  Reference
+} from 'tripledoc';
 import { solid, schema } from 'rdf-namespaces';
 import openstreetmap from '../api/openstreetmap';
 
+type LocationData = {
+  latitude: String | Date | Number | null;
+  longitude: String | Date | Number | null;
+  place: String | null;
+};
 async function getLocationDocument(locationListEntry: TripleSubject) {
   try {
     let locationListUrl = await locationListEntry.getNodeRef(solid.instance);
+
     try {
       if (locationListUrl) {
         return await fetchDocument(locationListUrl);
@@ -28,6 +39,7 @@ async function selectAuthorizedLocationDoc(profile: TripleSubject) {
         #location          solid:instance           /public/location.ttl
     */
   const publicTypeIndexUrl = profile.getNodeRef(solid.publicTypeIndex);
+  console.log('publicTypeIndexUrl' + JSON.stringify(publicTypeIndexUrl));
   try {
     if (publicTypeIndexUrl) {
       const publicTypeIndex = await fetchDocument(publicTypeIndexUrl);
@@ -37,9 +49,11 @@ async function selectAuthorizedLocationDoc(profile: TripleSubject) {
         schema.GeoCoordinates
       );
 
+      console.log('locationentries length ' + locationListEntries.length);
       if (locationListEntries.length >= 0) {
         try {
           //Detail
+          console.log('in detail');
           return await getLocationDocument(locationListEntries[0]);
         } catch (err) {
           console.log(err);
@@ -75,23 +89,33 @@ const getPlace = async (
   return response.data.features[0].properties.geocoding.label;
 };
 
-const getFriends = async (webId: string) => {
+const getLocation = async (webId: string) => {
   let locationDoc: TripleDocument | undefined = undefined;
   const webIdDoc = await fetchDocument(webId);
   const profile = webIdDoc.getSubject(webId);
+  let locationData: LocationData = { latitude: 0, longitude: 0, place: '' };
+  //profile is getting set because it is finding the URL
+  //from selectAuthorized..
 
   try {
     locationDoc = await selectAuthorizedLocationDoc(profile);
+    console.log('locaiton doc ' + locationDoc);
     try {
       if (locationDoc) {
-        const location: TripleSubject = await locationDoc.getSubject(
-          locationDoc.asRef()
+        let locRef: Reference = 'http://schema.org/GeoCoordinates';
+        const locationSubject: TripleSubject[] = await locationDoc.getSubjectsOfType(
+          locRef
         );
-        console.log('Location: ' + JSON.stringify(location));
-        let latitude = location.getLiteral(schema.latitude); //returning null
-        let longitude = location.getLiteral(schema.longitude); //returning null
+        let latitude = locationSubject[0].getLiteral(schema.latitude); //returning null
+        let longitude = locationSubject[0].getLiteral(schema.longitude); //returning null
         try {
           let place: string | null = await getPlace(latitude, longitude);
+          locationData = {
+            latitude: latitude,
+            longitude: longitude,
+            place: place
+          };
+          return { latitude, longitude, place };
         } catch (err) {
           console.log(err);
         }
@@ -104,10 +128,29 @@ const getFriends = async (webId: string) => {
   }
 };
 export const LocationDetails: React.FC<{ webId: string }> = ({ webId }) => {
-  getFriends(webId);
+  const [locationData, setLocationData] = React.useState<
+    LocationData | undefined
+  >({
+    latitude: 0,
+    longitude: 0,
+    place: null
+  });
+  useEffect(() => {
+    let findLocation = async () => {
+      await getLocation(webId).then(setLocationData);
+    };
+
+    findLocation();
+  });
+
   return (
     <>
-      <div>Any content about a person you may want</div>
+      <div>
+        <p>
+          {locationData?.latitude} {locationData?.longitude}
+        </p>
+        <p>Is at {locationData?.place}</p>
+      </div>
     </>
   );
 };

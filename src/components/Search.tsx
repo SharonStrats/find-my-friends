@@ -3,7 +3,7 @@ import {
   fetchPersonTypeLists,
   PersonTypeLists,
   PersonType
-} from 'solid-friend-helpers';
+} from 'solid-user-search';
 
 interface Props {
   onSelect: (webId: string) => void;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { PersonDetails, fetchPersonDetails } from 'solid-friend-helpers';
+import { PersonDetails, fetchPersonDetails } from 'solid-user-search';
 import { LocationDetails } from './LocationDetails';
 interface Props {
   webId?: string;

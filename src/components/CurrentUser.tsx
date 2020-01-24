@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useWebId } from '@solid/react';
 import { PersonSummary } from './PersonLists'; //need to change this...
-import { fetchPersonDetails, PersonDetails } from 'solid-friend-helpers';
+import { fetchPersonDetails, PersonDetails } from 'solid-user-search';
 
 export const CurrentUser: React.FC<{}> = () => {
   const myWebId = useWebId() || null;
@@ -19,7 +19,9 @@ export const CurrentUser: React.FC<{}> = () => {
     const getUserDetails = async () => {
       try {
         await fetchPersonDetails(myWebId).then(setPersonDetals);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     };
     if (myWebId) {
       getUserDetails();

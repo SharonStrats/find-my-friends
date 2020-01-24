@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  fetchConnections,
-  PersonDetails,
-  PersonType
-} from 'solid-friend-helpers';
+import { fetchConnections, PersonDetails, PersonType } from 'solid-user-search';
 
 type FriendProps = {
   details: PersonDetails;

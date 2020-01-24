@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { fetchPersonTypeLists, PersonDetails } from 'solid-friend-helpers';
+import { fetchPersonTypeLists, PersonDetails } from 'solid-user-search';
 //This component should bring up all requestors for the solid user
 //and allow them to accept the request..
 export const FriendRequestButton = () => {

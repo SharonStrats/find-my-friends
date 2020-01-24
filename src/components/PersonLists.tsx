@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { PersonDetails } from 'solid-friend-helpers';
+import { PersonDetails } from 'solid-user-search';
 
 interface PersonProps {
   details: PersonDetails;
