@@ -1,5 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+### Details
+
+This ended up in the Solid or Inrupt repositories and is not the final version. Need to 
+fix this and recreate the library which is on my machine.
+Also will rewrite this as a component in solid-ui to be used in the social-pane on SolidOS.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -21,6 +27,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 Builds the app for production to the `build` folder.<br />
 It correctly bundles React in production mode and optimizes the build for the best performance.
+
 
 The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
